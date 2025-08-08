@@ -217,7 +217,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center py-4 text-gray-500 text-sm">
-        <p>ระบบจัดการร้านซักรีดอัตโนมัติ | Self-Service AutoWash Station</p>
+        <p>ระบบจัดการร้านซักอัตโนมัติ | Self-Service AutoWash Station</p>
       </footer>
 
       {/* Modals and Notifications */}
