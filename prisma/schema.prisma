@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Machine {
+  id          Int       @id @default(autoincrement())
+  name        String    // "เครื่องที่ 1", "เครื่องที่ 2"
+  status      Status    @default(AVAILABLE)
+  startTime   DateTime?
+  endTime     DateTime?
+  duration    Int       @default(30) // นาที
+  price       Decimal   @default(20.00) // บาท
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("machines")
+}
+
+enum Status {
+  AVAILABLE   // ว่าง
+  RUNNING     // กำลังซัก
+  MAINTENANCE // ปิดปรับปรุง
+}
