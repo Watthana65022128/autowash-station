@@ -50,14 +50,19 @@ export default function MachineCard({ machine, onStartMachine }: MachineCardProp
 
   const getStatusText = () => {
     if (machine.status === 'MAINTENANCE') return 'ปิดปรับปรุง'
-    if (machine.status === 'RUNNING') return `เหลือเวลา ${formatTime(timeRemaining)}`
+    if (machine.status === 'RUNNING') return 'กำลังทำงาน'
     return 'ว่าง'
+  }
+
+  const getTimeText = () => {
+    if (machine.status === 'RUNNING') return `เหลือเวลา ${formatTime(timeRemaining)}`
+    return null
   }
 
   const getStatusIcon = () => {
     if (machine.status === 'MAINTENANCE') return '🔧'
-    if (machine.status === 'RUNNING') return '🌀'
-    return '✅'
+    if (machine.status === 'RUNNING') return '🔄' 
+    return '🧺'
   }
 
   return (
@@ -73,7 +78,10 @@ export default function MachineCard({ machine, onStartMachine }: MachineCardProp
       <div className="text-center">
         <div className="text-4xl mb-2">{getStatusIcon()}</div>
         <h3 className="text-xl font-bold mb-2">{machine.name}</h3>
-        <p className="text-lg mb-2">{getStatusText()}</p>
+        <p className="text-lg font-bold mb-1">{getStatusText()}</p>
+        {getTimeText() && (
+          <p className="text-md opacity-90">{getTimeText()}</p>
+        )}
         
         {machine.status === 'AVAILABLE' && (
           <div className="mt-4">
