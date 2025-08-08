@@ -80,7 +80,7 @@ export default function MachineCard({ machine, onStartMachine }: MachineCardProp
             <p className="text-sm opacity-90">ราคา {machine.price.toString()} บาท</p>
             <p className="text-sm opacity-90">{machine.duration} นาที</p>
             <div className="mt-2 bg-white bg-opacity-20 rounded-lg py-2 px-4">
-              <p className="text-sm font-medium">👆 แตะเพื่อเริ่มใช้งาน</p>
+              <p className="text-sm font-medium text-gray-700">👆 แตะเพื่อเริ่มใช้งาน</p>
             </div>
           </div>
         )}

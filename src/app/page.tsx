@@ -3,20 +3,59 @@
 import { useState, useEffect } from 'react'
 import { Machine } from '@/types'
 import MachineGrid from '@/components/MachineGrid'
+import CoinInsertModal from '@/components/CoinInsertModal'
+import NotificationToast from '@/components/NotificationToast'
+import { NotificationManager, Toast } from '@/lib/notification-utils'
 
 export default function Home() {
   const [machines, setMachines] = useState<Machine[]>([])
   const [loading, setLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [selectedMachine, setSelectedMachine] = useState<Machine | null>(null)
+  const [showCoinModal, setShowCoinModal] = useState(false)
+  const [toasts, setToasts] = useState<Toast[]>([])
+  const [notificationManager] = useState(() => NotificationManager.getInstance())
 
-  // อัพเดทเวลาปัจจุบันทุกวินาที
+  // Setup notifications
+  useEffect(() => {
+    // Subscribe to toast notifications
+    const unsubscribe = notificationManager.subscribeToToasts(setToasts)
+    
+    // Request notification permission on load
+    notificationManager.requestNotificationPermission()
+    
+    return unsubscribe
+  }, [notificationManager])
+
+  // อัพเดทเวลาปัจจุบันทุกวินาที + ตรวจสอบการแจ้งเตือน
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
+      
+      // ตรวจสอบเครื่องที่เหลือเวลาน้อย
+      machines.forEach(machine => {
+        if (machine.status === 'RUNNING' && machine.endTime) {
+          const now = new Date()
+          const end = new Date(machine.endTime)
+          const remainingSeconds = Math.max(0, Math.floor((end.getTime() - now.getTime()) / 1000))
+          
+          // แจ้งเตือนเมื่อเหลือ 60 วินาที (ครั้งเดียว)
+          if (remainingSeconds === 60) {
+            notificationManager.notifyMachineAlmostFinished(machine.id, machine.name, remainingSeconds)
+          }
+          
+          // แจ้งเตือนเมื่อเสร็จสิ้น
+          if (remainingSeconds === 0) {
+            notificationManager.notifyMachineFinished(machine.id, machine.name)
+            // อัพเดทสถานะเครื่องเป็นว่าง
+            updateMachineStatus(machine.id, 'AVAILABLE')
+          }
+        }
+      })
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [machines, notificationManager])
 
   // โหลดข้อมูลเครื่องซักผ้า
   const fetchMachines = async () => {
@@ -55,26 +94,59 @@ export default function Home() {
     }
   }
 
-  const handleStartMachine = async (machineId: number) => {
-    // จำลองการหยอดเหรียญ (20 บาท)
+  // อัพเดทสถานะเครื่อง
+  const updateMachineStatus = async (machineId: number, status: 'AVAILABLE' | 'RUNNING' | 'MAINTENANCE') => {
     try {
-      const response = await fetch(`/api/machines/${machineId}/start`, {
+      await fetch(`/api/machines/${machineId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status })
+      })
+      fetchMachines()
+    } catch (error) {
+      console.error('Error updating machine status:', error)
+    }
+  }
+
+  const handleStartMachine = (machineId: number) => {
+    const machine = machines.find(m => m.id === machineId)
+    if (machine) {
+      setSelectedMachine(machine)
+      setShowCoinModal(true)
+    }
+  }
+
+  const handleCoinInsertConfirm = async (amount: number) => {
+    if (!selectedMachine) return
+
+    try {
+      const response = await fetch(`/api/machines/${selectedMachine.id}/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount: 20 })
+        body: JSON.stringify({ amount })
       })
 
       if (response.ok) {
+        const result = await response.json()
+        
+        // แสดงข้อความสำเร็จ
+        notificationManager.addToast(
+          `🧺 ${selectedMachine.name} เริ่มทำงานแล้ว! ${result.change > 0 ? `เงินทอน: ${result.change} บาท` : ''}`,
+          'success'
+        )
+        
         fetchMachines()
       } else {
         const error = await response.json()
-        alert(error.error)
+        notificationManager.addToast(error.error, 'error')
       }
     } catch (error) {
       console.error('Error starting machine:', error)
-      alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+      notificationManager.addToast('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง', 'error')
     }
   }
 
@@ -147,6 +219,24 @@ export default function Home() {
       <footer className="text-center py-4 text-gray-500 text-sm">
         <p>ระบบจัดการร้านซักรีดอัตโนมัติ | Self-Service Laundromat</p>
       </footer>
+
+      {/* Modals and Notifications */}
+      {selectedMachine && (
+        <CoinInsertModal
+          machine={selectedMachine}
+          isOpen={showCoinModal}
+          onClose={() => {
+            setShowCoinModal(false)
+            setSelectedMachine(null)
+          }}
+          onConfirm={handleCoinInsertConfirm}
+        />
+      )}
+      
+      <NotificationToast 
+        toasts={toasts}
+        onRemoveToast={(id) => notificationManager.removeToast(id)}
+      />
     </div>
   )
 }
