@@ -19,7 +19,7 @@ export class NotificationManager {
   }
 
   // Toast Notifications
-  addToast(message: string, type: Toast['type'] = 'info', duration?: number): string {
+  addToast(message: string, type: Toast['type'] = 'info', duration: number = 10000): string {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9)
     const toast: Toast = { id, message, type, duration }
     
@@ -59,7 +59,7 @@ export class NotificationManager {
     }
 
     if (Notification.permission === 'denied') {
-      this.addToast('การแจ้งเตือนถูกปิดใช้งาน กรุณาเปิดในการตั้งค่าเบราว์เซอร์', 'warning', 8000)
+      this.addToast('การแจ้งเตือนถูกปิดใช้งาน กรุณาเปิดในการตั้งค่าเบราว์เซอร์', 'warning', 10000)
       return false
     }
 
@@ -73,10 +73,7 @@ export class NotificationManager {
         if (permission === 'granted') {
           this.addToast('เปิดการแจ้งเตือนสำเร็จ! 🔔', 'success')
           return true
-        } else {
-          this.addToast('การแจ้งเตือนถูกปฏิเสธ', 'warning')
-          return false
-        }
+        } 
       } catch (error) {
         console.error('Error requesting notification permission:', error)
         return false
@@ -115,7 +112,7 @@ export class NotificationManager {
     const message = `🧺 ${machineName} เหลือเวลา ${secondsRemaining} วินาที กรุณาเตรียมมารับผ้า`
     
     // Show toast
-    this.addToast(message, 'warning', 8000)
+    this.addToast(message, 'warning', 10000)
     
     // Show browser notification
     this.showBrowserNotification('แจ้งเตือนเครื่องซักผ้า', {
@@ -128,7 +125,7 @@ export class NotificationManager {
   }
 
   notifyMachineFinished(machineId: number, machineName: string): void {
-    const message = `✅ ${machineName} ซักเสร็จแล้ว กรุณามารับผ้า`
+    const message = `${machineName} ซักเสร็จแล้ว กรุณามารับผ้า`
     
     // Show toast
     this.addToast(message, 'success', 10000)
