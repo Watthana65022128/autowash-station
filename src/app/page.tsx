@@ -180,7 +180,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="flex items-center mb-2 sm:mb-0">
-              <div className="text-3xl mr-3">🧺</div>
+              <div className="text-3xl mr-3">🏪</div>
               <h1 className="text-2xl font-bold text-gray-800">ร้านซักรีดอัตโนมัติ</h1>
             </div>
             <div className="text-sm text-gray-600">
