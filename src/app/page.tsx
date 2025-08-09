@@ -207,7 +207,7 @@ export default function Home() {
           <>
             <div className="max-w-4xl mx-auto px-4 mb-6">
               <h2 className="text-xl font-semibold text-gray-700 text-center">
-                เลือกเครื่องซักผ้าที่ต้องการใช้
+                เลือกเครื่องซักผ้าที่ต้องการใช้บริการ
               </h2>
             </div>
             <MachineGrid machines={machines} onStartMachine={handleStartMachine} />
