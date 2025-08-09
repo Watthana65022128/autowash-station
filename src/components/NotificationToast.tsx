@@ -64,7 +64,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) 
   const getIcon = () => {
     const icons = {
       success: "✅",
-      warning: "⚠️", 
+      warning: "❕", 
       error: "❌",
       info: "ℹ️"
     }
@@ -85,7 +85,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) 
           }}
           className="ml-4 text-white hover:text-gray-200 font-bold text-lg leading-none"
         >
-          ×
+          ok
         </button>
       </div>
     </div>
