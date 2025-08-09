@@ -121,7 +121,7 @@ export default function CoinInsertModal({ machine, isOpen, onClose, onConfirm }:
           )}
           {isInsufficientAmount && (
             <div className="text-red-500 text-center mt-2">
-              <p className="font-medium">⚠️ จำนวนเงินไม่เพียงพอ</p>
+              <p className="font-medium">จำนวนเงินไม่เพียงพอ</p>
               <p className="text-sm">ต้องการอีก {requiredAmount - totalAmount} บาท</p>
             </div>
           )}

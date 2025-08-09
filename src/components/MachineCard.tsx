@@ -95,7 +95,7 @@ export default function MachineCard({ machine, onStartMachine }: MachineCardProp
         
         {machine.status === 'RUNNING' && timeRemaining < 60 && timeRemaining > 0 && (
           <div className="mt-2 bg-yellow-600 rounded-lg py-1 px-3">
-            <p className="text-xs font-bold">⚠️ กรุณาเตรียมมารับผ้า!</p>
+            <p className="text-xs font-bold">กรุณาเตรียมมารับผ้า!</p>
           </div>
         )}
       </div>
