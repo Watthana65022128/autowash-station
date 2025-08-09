@@ -76,7 +76,7 @@ export default function CoinInsertModal({ machine, isOpen, onClose, onConfirm }:
             <div key={coinValue} className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
               <div className="flex items-center">
                 <div className="text-2xl mr-3">
-                  {coinValue === 1 ? '🥉' : coinValue === 5 ? '🥈' : '🥇'}
+                  {coinValue === 1 ? '🪙' : coinValue === 5 ? '🪙' : '🪙'}
                 </div>
                 <div>
                   <p className="font-medium text-black">{coinValue} บาท</p>
